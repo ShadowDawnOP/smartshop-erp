@@ -36,8 +36,8 @@ app.use('/api/payments', paymentRoutes);
 app.use('/api/dashboard', dashboardRoutes);
 app.use('/api/export', exportRoutes);
 
-app.use((req, res) => {
-  res.status(404).json({ error: 'Route not found' });
+app.get('*', (req, res) => {
+  res.sendFile(path.join(__dirname, '../client/pages/index.html'));
 });
 
 app.use(errorHandler);
