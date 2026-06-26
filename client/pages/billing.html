@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Billing — SmartShop ERP</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: #f9fafb;
+      color: #111;
+    }
+
+    header {
+      background: white;
+      border-bottom: 1px solid #e5e7eb;
+      padding: 1rem 2rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    header h1 { font-size: 1.1rem; font-weight: 600; }
+
+    nav a {
+      font-size: 0.85rem;
+      color: #6b7280;
+      text-decoration: none;
+      margin-left: 1.5rem;
+    }
+
+    nav a:hover { color: #111; }
+
+    .container {
+      max-width: 800px;
+      margin: 2rem auto;
+      padding: 0 1.5rem;
+    }
+
+    h2 { font-size: 1.2rem; font-weight: 600; margin-bottom: 1.5rem; }
+
+    .section {
+      background: white;
+      border: 1px solid #e5e7eb;
+      border-radius: 8px;
+      padding: 1.5rem;
+      margin-bottom: 1rem;
+    }
+
+    .section h3 {
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: #6b7280;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 1rem;
+    }
+
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+    }
+
+    .form-group { display: flex; flex-direction: column; gap: 0.35rem; }
+    .form-group label { font-size: 0.8rem; color: #6b7280; font-weight: 500; }
+
+    select, input {
+      padding: 0.5rem 0.75rem;
+      border: 1px solid #e5e7eb;
+      border-radius: 6px;
+      font-size: 0.875rem;
+      outline: none;
+      width: 100%;
+    }
+
+    select:focus, input:focus { border-color: #111; }
+
+    .add-item-row {
+      display: grid;
+      grid-template-columns: 2fr 1fr auto;
+      gap: 0.75rem;
+      align-items: end;
+      margin-bottom: 1rem;
+    }
+
+    button {
+      padding: 0.5rem 1rem;
+      border: none;
+      border-radius: 6px;
+      font-size: 0.875rem;
+      cursor: pointer;
+      font-weight: 500;
+    }
+
+    .btn-primary { background: #111; color: white; }
+    .btn-primary:hover { background: #333; }
+    .btn-secondary { background: #f3f4f6; color: #111; }
+    .btn-secondary:hover { background: #e5e7eb; }
+    .btn-danger { background: #fef2f2; color: #dc2626; }
+
+    .items-table { width: 100%; border-collapse: collapse; }
+
+    .items-table th {
+      text-align: left;
+      font-size: 0.75rem;
+      color: #6b7280;
+      font-weight: 600;
+      padding: 0.5rem 0;
+      border-bottom: 1px solid #e5e7eb;
+    }
+
+    .items-table td {
+      padding: 0.65rem 0;
+      font-size: 0.875rem;
+      border-bottom: 1px solid #f3f4f6;
+    }
+
+    .items-table tr:last-child td { border-bottom: none; }
+
+    .totals {
+      margin-top: 1rem;
+      text-align: right;
+      font-size: 0.875rem;
+    }
+
+    .totals p { margin-bottom: 0.35rem; color: #6b7280; }
+
+    .totals .grand-total {
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: #111;
+      margin-top: 0.5rem;
+    }
+
+    .alert {
+      padding: 0.75rem 1rem;
+      border-radius: 6px;
+      font-size: 0.875rem;
+      margin-bottom: 1rem;
+      display: none;
+    }
+
+    .alert-error { background: #fef2f2; color: #dc2626; display: block; }
+    .alert-success { background: #f0fdf4; color: #16a34a; display: block; }
+
+    .empty-items {
+      text-align: center;
+      padding: 1.5rem;
+      color: #9ca3af;
+      font-size: 0.85rem;
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <h1>SmartShop ERP</h1>
+  <nav>
+    <a href="/pages/index.html">Home</a>
+    <a href="/pages/products.html">Inventory</a>
+    <a href="/pages/customers.html">Customers</a>
+    <a href="/pages/billing.html">Billing</a>
+    <a href="/pages/invoices.html">Invoices</a>
+    <a href="/pages/udhaar.html">Udhaar</a>
+  </nav>
+</header>
+
+<div class="container">
+  <h2>New Bill</h2>
+
+  <div id="alert" class="alert"></div>
+
+  <!-- Customer Selection -->
+  <div class="section">
+    <h3>Customer</h3>
+    <div class="form-row">
+      <div class="form-group">
+        <label>Select Customer</label>
+        <select id="customerId">
+          <option value="">-- Select a customer --</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Payment Method</label>
+        <select id="paymentMethod">
+          <option value="cash">Cash</option>
+          <option value="upi">UPI</option>
+          <option value="credit">Credit (Udhaar)</option>
+        </select>
+      </div>
+    </div>
+  </div>
+
+  <!-- Add Items -->
+  <div class="section">
+    <h3>Items</h3>
+
+    <div class="add-item-row">
+      <div class="form-group">
+        <label>Product</label>
+        <select id="productSelect">
+          <option value="">-- Select product --</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Quantity</label>
+        <input type="number" id="quantity" value="1" min="1">
+      </div>
+      <button class="btn-secondary" onclick="addItem()">+ Add</button>
+    </div>
+
+    <table class="items-table">
+      <thead>
+        <tr>
+          <th>Product</th>
+          <th>Price</th>
+          <th>Qty</th>
+          <th>Total</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody id="itemsList">
+        <tr>
+          <td colspan="5" class="empty-items">No items added yet</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="totals">
+      <p>Subtotal: ₹<span id="subtotal">0</span></p>
+      <div style="display:flex;justify-content:flex-end;align-items:center;gap:0.5rem;margin:0.35rem 0;">
+        <label style="font-size:0.8rem;color:#6b7280;">Discount ₹</label>
+        <input type="number" id="discount" value="0" min="0"
+          style="width:80px;" oninput="updateTotals()">
+      </div>
+      <p class="grand-total">Total: ₹<span id="grandTotal">0</span></p>
+    </div>
+  </div>
+
+  <div style="display:flex;justify-content:flex-end;gap:0.75rem;">
+    <button class="btn-secondary" onclick="clearBill()">Clear</button>
+    <button class="btn-primary" onclick="submitBill()">Generate Bill</button>
+  </div>
+</div>
+
+<script src="/js/auth.js"></script>
+<script>
+  if (!requireAuth()) throw new Error('Not authenticated');
+
+  let cartItems = [];
+  let products  = [];
+
+  async function loadCustomers() {
+    const response = await authFetch('/api/customers');
+    const result   = await response.json();
+
+    const select = document.getElementById('customerId');
+    result.data.forEach(c => {
+      const option = document.createElement('option');
+      option.value = c._id;
+      option.textContent = `${c.name} — ${c.phone}`;
+      select.appendChild(option);
+    });
+  }
+
+  // Load products into dropdown
+  async function loadProducts() {
+    const response = await authFetch('/api/products');
+    const result   = await response.json();
+    products = result.data || [];
+
+    const select = document.getElementById('productSelect');
+    products.forEach(p => {
+      const option = document.createElement('option');
+      option.value = p._id;
+      option.textContent = `${p.name} — ₹${p.price} (Stock: ${p.stock})`;
+      select.appendChild(option);
+    });
+  }
+
+  function addItem() {
+    const productId = document.getElementById('productSelect').value;
+    const quantity  = parseInt(document.getElementById('quantity').value);
+
+    if (!productId) {
+      showAlert('Please select a product', 'error');
+      return;
+    }
+
+    if (!quantity || quantity < 1) {
+      showAlert('Quantity must be at least 1', 'error');
+      return;
+    }
+
+    const product = products.find(p => p._id === productId);
+    if (!product) return;
+
+    if (quantity > product.stock) {
+      showAlert(`Only ${product.stock} units available for ${product.name}`, 'error');
+      return;
+    }
+
+    // If product already in cart, increase quantity
+    const existing = cartItems.find(i => i.productId === productId);
+    if (existing) {
+      existing.quantity += quantity;
+      existing.total = existing.price * existing.quantity;
+    } else {
+      cartItems.push({
+        productId,
+        name: product.name,
+        price: product.price,
+        quantity,
+        total: product.price * quantity,
+      });
+    }
+
+    renderCart();
+    document.getElementById('quantity').value = 1;
+  }
+
+  function removeItem(productId) {
+    cartItems = cartItems.filter(i => i.productId !== productId);
+    renderCart();
+  }
+
+  function renderCart() {
+    const tbody = document.getElementById('itemsList');
+
+    if (cartItems.length === 0) {
+      tbody.innerHTML = `<tr><td colspan="5" class="empty-items">No items added yet</td></tr>`;
+      updateTotals();
+      return;
+    }
+
+    tbody.innerHTML = cartItems.map(item => `
+      <tr>
+        <td>${item.name}</td>
+        <td>₹${item.price}</td>
+        <td>${item.quantity}</td>
+        <td>₹${item.total}</td>
+        <td>
+          <button class="btn-danger" style="padding:0.25rem 0.5rem;font-size:0.75rem;"
+            onclick="removeItem('${item.productId}')">✕</button>
+        </td>
+      </tr>
+    `).join('');
+
+    updateTotals();
+  }
+
+  function updateTotals() {
+    const subtotal = cartItems.reduce((sum, i) => sum + i.total, 0);
+    const discount = parseFloat(document.getElementById('discount').value) || 0;
+    const total    = Math.max(0, subtotal - discount);
+
+    document.getElementById('subtotal').textContent  = subtotal;
+    document.getElementById('grandTotal').textContent = total;
+  }
+
+  function showAlert(message, type) {
+    const alert = document.getElementById('alert');
+    alert.textContent = message;
+    alert.className = `alert alert-${type}`;
+    setTimeout(() => { alert.className = 'alert'; }, 4000);
+  }
+
+  function clearBill() {
+    cartItems = [];
+    renderCart();
+    document.getElementById('customerId').value    = '';
+    document.getElementById('paymentMethod').value = 'cash';
+    document.getElementById('discount').value      = '0';
+  }
+
+  async function submitBill() {
+    const customerId     = document.getElementById('customerId').value;
+    const paymentMethod  = document.getElementById('paymentMethod').value;
+    const discount       = parseFloat(document.getElementById('discount').value) || 0;
+
+    if (!customerId) {
+      showAlert('Please select a customer', 'error');
+      return;
+    }
+
+    if (cartItems.length === 0) {
+      showAlert('Please add at least one item', 'error');
+      return;
+    }
+
+    try {
+      const response = await authFetch('/api/invoices', {
+        method: 'POST',
+        body: JSON.stringify({
+          customerId,
+          paymentMethod,
+          discount,
+          items: cartItems.map(i => ({
+            productId: i.productId,
+            quantity:  i.quantity
+          }))
+        })
+      });
+
+      const result = await response.json();
+
+      if (!response.ok) {
+        showAlert(result.error || 'Failed to create invoice', 'error');
+        return;
+      }
+
+      showAlert(`Bill created — ${result.data.invoiceNumber}`, 'success');
+      clearBill();
+
+    } catch (error) {
+      showAlert('Something went wrong', 'error');
+    }
+  }
+
+  loadCustomers();
+  loadProducts();
+</script>
+
+</body>
+</html>

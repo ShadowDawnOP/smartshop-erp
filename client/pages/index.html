@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SmartShop ERP</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: #f9fafb;
+    }
+
+    header {
+      background: white;
+      border-bottom: 1px solid #e5e7eb;
+      padding: 1rem 2rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    header h1 { font-size: 1.1rem; font-weight: 600; }
+
+    .header-right {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      font-size: 0.85rem;
+      color: #6b7280;
+    }
+
+    .role-badge {
+      padding: 0.2rem 0.6rem;
+      background: #f3f4f6;
+      border-radius: 999px;
+      font-size: 0.75rem;
+      font-weight: 500;
+      color: #374151;
+      text-transform: capitalize;
+    }
+
+    button.logout {
+      padding: 0.35rem 0.75rem;
+      background: none;
+      border: 1px solid #e5e7eb;
+      border-radius: 6px;
+      font-size: 0.8rem;
+      cursor: pointer;
+      color: #6b7280;
+    }
+
+    button.logout:hover { background: #f9fafb; }
+
+    .container {
+      max-width: 800px;
+      margin: 3rem auto;
+      padding: 0 1.5rem;
+    }
+
+    h2 { font-size: 1.2rem; margin-bottom: 0.5rem; }
+    p { color: #6b7280; font-size: 0.9rem; margin-bottom: 2rem; }
+
+    .nav-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+    }
+
+    .nav-card {
+      background: white;
+      border: 1px solid #e5e7eb;
+      border-radius: 8px;
+      padding: 1.5rem;
+      text-decoration: none;
+      color: #111;
+      transition: border-color 0.15s;
+    }
+
+    .nav-card:hover { border-color: #111; }
+
+    .nav-card h3 { font-size: 1rem; margin-bottom: 0.25rem; }
+    .nav-card p { font-size: 0.8rem; color: #9ca3af; margin: 0; }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>SmartShop ERP</h1>
+    <div class="header-right">
+      <span id="userName">...</span>
+      <span class="role-badge" id="userRole">...</span>
+      <button class="logout" onclick="logout()">Sign out</button>
+    </div>
+  </header>
+
+  <div class="container">
+    <h2 id="greeting">Welcome back</h2>
+    <p>What would you like to manage today?</p>
+
+    <div class="nav-grid">
+      <a href="/pages/products.html" class="nav-card">
+        <h3>Inventory</h3>
+        <p>Manage products and stock levels</p>
+      </a>
+      <a href="/pages/customers.html" class="nav-card">
+        <h3>Customers</h3>
+        <p>View and manage customer profiles</p>
+      </a>
+      <a href="/pages/billing.html" class="nav-card">
+        <h3>Billing</h3>
+        <p>Create invoices and manage bills</p>
+      </a>
+      <a href="/pages/udhaar.html" class="nav-card">
+        <h3>Udhaar</h3>
+        <p>Track credit and record payments</p>
+      </a>
+    </div>
+  </div>
+
+  <script src="/js/auth.js"></script>
+  <script>
+  if (!requireAuth()) throw new Error('Not authenticated');
+  // Redirect straight to dashboard
+  window.location.href = '/pages/dashboard.html';
+  </script>
+
+</body>
+</html>

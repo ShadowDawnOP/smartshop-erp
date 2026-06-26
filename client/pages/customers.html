@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Customers — SmartShop ERP</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+ 
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: #f9fafb;
+      color: #111;
+    }
+ 
+    header {
+      background: white;
+      border-bottom: 1px solid #e5e7eb;
+      padding: 1rem 2rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+ 
+    header h1 { font-size: 1.1rem; font-weight: 600; }
+ 
+    nav a {
+      font-size: 0.85rem;
+      color: #6b7280;
+      text-decoration: none;
+      margin-left: 1.5rem;
+    }
+ 
+    nav a:hover { color: #111; }
+ 
+    .container { max-width: 1000px; margin: 2rem auto; padding: 0 1.5rem; }
+ 
+    .top-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1.5rem;
+      gap: 1rem;
+    }
+ 
+    .top-bar h2 { font-size: 1.2rem; font-weight: 600; }
+ 
+    .top-bar-right { display: flex; gap: 0.75rem; align-items: center; }
+ 
+    input[type="search"] {
+      padding: 0.5rem 0.75rem;
+      border: 1px solid #e5e7eb;
+      border-radius: 6px;
+      font-size: 0.875rem;
+      outline: none;
+      width: 220px;
+    }
+ 
+    input[type="search"]:focus { border-color: #111; }
+ 
+    button {
+      padding: 0.5rem 1rem;
+      border: none;
+      border-radius: 6px;
+      font-size: 0.875rem;
+      cursor: pointer;
+      font-weight: 500;
+    }
+ 
+    .btn-primary { background: #111; color: white; }
+    .btn-primary:hover { background: #333; }
+    .btn-danger { background: #fef2f2; color: #dc2626; }
+    .btn-danger:hover { background: #fee2e2; }
+ 
+    .form-card {
+      background: white;
+      border: 1px solid #e5e7eb;
+      border-radius: 8px;
+      padding: 1.5rem;
+      margin-bottom: 1.5rem;
+      display: none;
+    }
+ 
+    .form-card.open { display: block; }
+    .form-card h3 { font-size: 1rem; margin-bottom: 1rem; }
+ 
+    .form-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+      margin-bottom: 1rem;
+    }
+ 
+    .form-group { display: flex; flex-direction: column; gap: 0.35rem; }
+    .form-group label { font-size: 0.8rem; color: #6b7280; font-weight: 500; }
+ 
+    .form-group input {
+      padding: 0.5rem 0.75rem;
+      border: 1px solid #e5e7eb;
+      border-radius: 6px;
+      font-size: 0.875rem;
+      outline: none;
+    }
+ 
+    .form-group input:focus { border-color: #111; }
+    .form-actions { display: flex; gap: 0.5rem; }
+ 
+    .table-card {
+      background: white;
+      border: 1px solid #e5e7eb;
+      border-radius: 8px;
+      overflow: hidden;
+    }
+ 
+    table { width: 100%; border-collapse: collapse; }
+    thead { background: #f9fafb; }
+ 
+    th {
+      text-align: left;
+      padding: 0.75rem 1rem;
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: #6b7280;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      border-bottom: 1px solid #e5e7eb;
+    }
+ 
+    td {
+      padding: 0.875rem 1rem;
+      font-size: 0.875rem;
+      border-bottom: 1px solid #f3f4f6;
+    }
+ 
+    tr:last-child td { border-bottom: none; }
+    tr:hover td { background: #fafafa; }
+ 
+    .credit-due { color: #dc2626; font-weight: 500; }
+    .no-credit { color: #9ca3af; }
+ 
+    .empty-state {
+      text-align: center;
+      padding: 3rem;
+      color: #9ca3af;
+      font-size: 0.9rem;
+    }
+ 
+    .alert {
+      padding: 0.75rem 1rem;
+      border-radius: 6px;
+      font-size: 0.875rem;
+      margin-bottom: 1rem;
+      display: none;
+    }
+ 
+    .alert-error { background: #fef2f2; color: #dc2626; display: block; }
+    .alert-success { background: #f0fdf4; color: #16a34a; display: block; }
+  </style>
+</head>
+<body>
+ 
+<header>
+  <h1>SmartShop ERP</h1>
+  <nav>
+    <a href="/pages/index.html">Home</a>
+    <a href="/pages/products.html">Inventory</a>
+    <a href="/pages/customers.html">Customers</a>
+    <a href="/pages/billing.html">Billing</a>
+    <a href="/pages/invoices.html">Invoices</a>
+    <a href="/pages/udhaar.html">Udhaar</a>
+  </nav>
+</header>
+ 
+<div class="container">
+  <div class="top-bar">
+    <h2>Customers</h2>
+    <div class="top-bar-right">
+      <input type="search" id="searchInput" placeholder="Search by name or phone...">
+      <button class="btn-primary" onclick="toggleForm()">+ Add Customer</button>
+    </div>
+  </div>
+ 
+  <div id="alert" class="alert"></div>
+ 
+  <div class="form-card" id="customerForm">
+    <h3>New Customer</h3>
+    <div class="form-grid">
+      <div class="form-group">
+        <label>Full Name</label>
+        <input type="text" id="name" placeholder="e.g. Rahul Sharma">
+      </div>
+      <div class="form-group">
+        <label>Phone Number</label>
+        <input type="text" id="phone" placeholder="e.g. 9876543210">
+      </div>
+      <div class="form-group" style="grid-column: span 2;">
+        <label>Address (optional)</label>
+        <input type="text" id="address" placeholder="e.g. 12 MG Road, Delhi">
+      </div>
+    </div>
+    <div class="form-actions">
+      <button class="btn-primary" onclick="createCustomer()">Save Customer</button>
+      <button onclick="toggleForm()" style="background:#f3f4f6;">Cancel</button>
+    </div>
+  </div>
+ 
+  <div class="table-card">
+    <table>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Phone</th>
+          <th>Address</th>
+          <th>Total Purchases</th>
+          <th>Credit Due</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody id="customerList">
+        <tr>
+          <td colspan="6" class="empty-state">Loading customers...</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+ 
+<script src="/js/auth.js"></script>
+<script>
+
+  if (!requireAuth()) throw new Error('Not authenticated');
+ 
+  let searchTimeout = null;
+ 
+  function toggleForm() {
+    document.getElementById('customerForm').classList.toggle('open');
+  }
+ 
+  function showAlert(message, type) {
+    const alert = document.getElementById('alert');
+    alert.textContent = message;
+    alert.className = `alert alert-${type}`;
+    setTimeout(() => { alert.className = 'alert'; }, 3000);
+  }
+ 
+  function renderCustomers(customers) {
+    const tbody = document.getElementById('customerList');
+ 
+    if (customers.length === 0) {
+      tbody.innerHTML = `
+        <tr>
+          <td colspan="6" class="empty-state">No customers found.</td>
+        </tr>`;
+      return;
+    }
+ 
+    tbody.innerHTML = customers.map(c => `
+      <tr>
+        <td><strong>${c.name}</strong></td>
+        <td>${c.phone}</td>
+        <td>${c.address || '—'}</td>
+        <td>₹${c.totalPurchases}</td>
+        <td class="${c.outstandingCredit > 0 ? 'credit-due' : 'no-credit'}">
+          ${c.outstandingCredit > 0 ? '₹' + c.outstandingCredit : '—'}
+        </td>
+        <td>
+          <button class="btn-danger" onclick="deleteCustomer('${c._id}')">
+            Remove
+          </button>
+        </td>
+      </tr>
+    `).join('');
+  }
+ 
+  async function loadCustomers() {
+    try {
+      const response = await authFetch('/api/customers');
+      const result = await response.json();
+      renderCustomers(result.data || []);
+    } catch (error) {
+      showAlert('Failed to load customers', 'error');
+    }
+  }
+ 
+  async function createCustomer() {
+    const name    = document.getElementById('name').value.trim();
+    const phone   = document.getElementById('phone').value.trim();
+    const address = document.getElementById('address').value.trim();
+ 
+    if (!name || !phone) {
+      showAlert('Name and phone are required', 'error');
+      return;
+    }
+ 
+    try {
+      const response = await authFetch('/api/customers', {
+        method: 'POST',
+        body: JSON.stringify({ name, phone, address })
+      });
+ 
+      const result = await response.json();
+ 
+      if (!response.ok) {
+        showAlert(result.error || 'Failed to create customer', 'error');
+        return;
+      }
+ 
+      showAlert('Customer added', 'success');
+      toggleForm();
+      ['name', 'phone', 'address'].forEach(id => {
+        document.getElementById(id).value = '';
+      });
+      loadCustomers();
+ 
+    } catch (error) {
+      showAlert('Something went wrong', 'error');
+    }
+  }
+ 
+  async function deleteCustomer(id) {
+    if (!confirm('Remove this customer?')) return;
+ 
+    try {
+      const response = await authFetch(`/api/customers/${id}`, {
+        method: 'DELETE'
+      });
+ 
+      const result = await response.json();
+ 
+      if (!response.ok) {
+        showAlert(result.error || 'Failed to remove customer', 'error');
+        return;
+      }
+ 
+      showAlert('Customer removed', 'success');
+      loadCustomers();
+ 
+    } catch (error) {
+      showAlert('Something went wrong', 'error');
+    }
+  }
+ 
+  document.getElementById('searchInput').addEventListener('input', (e) => {
+    clearTimeout(searchTimeout);
+    const q = e.target.value.trim();
+ 
+    if (q === '') {
+      loadCustomers();
+      return;
+    }
+ 
+    searchTimeout = setTimeout(async () => {
+      try {
+        const response = await authFetch(`/api/customers/search?q=${encodeURIComponent(q)}`);
+        const result = await response.json();
+        renderCustomers(result.data || []);
+      } catch (error) {
+        showAlert('Search failed', 'error');
+      }
+    }, 400);
+  });
+ 
+  loadCustomers();
+</script>
+ 
+</body>
+</html>
