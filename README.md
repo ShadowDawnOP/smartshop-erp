@@ -42,5 +42,5 @@ JWT_EXPIRE=7d
 ## Default Login
 
 After running seed.js:
-- Owner: owner@shopsakhi.com / owner123
+- Owner: owner@shopsakhi.com / owner123@Yo
 - Employee: ravi@shopsakhi.com / ravi123
