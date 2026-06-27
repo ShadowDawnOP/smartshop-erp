@@ -30,3 +30,15 @@ const authFetch = async (url, options = {}) => {
     }
   });
 };
+
+const highlightNav = () => {
+  const current = window.location.pathname;
+  document.querySelectorAll('nav a').forEach(link => {
+    if (link.getAttribute('href') === current) {
+      link.style.color = '#111';
+      link.style.fontWeight = '600';
+    }
+  });
+};
+
+highlightNav();
